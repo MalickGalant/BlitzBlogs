@@ -5,13 +5,200 @@ const Home = () => (
     <Head>
       <title>BlitzBlogs</title>
       <link rel="icon" href="/favicon.ico" />
+      <script>
+     /** @const {string} */
+    const ATTRIBUTE_DONE_CALLBACK = 'data-done-callback';
+    const ALLOWED_ORIGINS = [
+      'http://localhost:8000',
+      'https://malickgalant.github.io/BlitzBlogs'
+    ];
+    let messageListenerRegistered = false;
+    let pendingNonce = null;
+    let domainVerifiedCallback = null;
+    let responseReturned = false;
+
+    function generateRandom() {
+      return btoa((Math.floor(Math.random() * 100000) + 1) + '-nonce');
+    }
+
+    function notifyParent(message) {
+      window.parent && window.parent.postMessage(message, '*');
+    }
+
+    function registerDomainVerifier(done) {
+      if (!window.parent) {
+        return;
+      }
+      domainVerifiedCallback = done;
+      if (!messageListenerRegistered) {
+        window.addEventListener('message', (event) => {
+
+          if (event.source != window.parent || !event.data) {
+            return;
+          }
+          if (!pendingNonce || !domainVerifiedCallback) {
+            return;
+          }
+          if (event.data['sentinel'] != 'onetap_google' || event.data['command'] != 'parent_frame_ready') {
+            return;
+          }
+          if (!event.data['nonce'] || event.data['nonce'] != pendingNonce) {
+            return;
+          }
+          pendingNonce = null;
+          if (ALLOWED_ORIGINS.includes(event.origin)) {
+            let callback = /** typeof {function} */ (domainVerifiedCallback);
+            domainVerifiedCallback = null;
+            callback();
+          }
+        });
+      }
+    }
+
+    function requestDomainVerification() {
+      pendingNonce = generateRandom();
+      notifyParent({
+        sentinel: 'onetap_google',
+        command: 'intermediate_iframe_ready',
+        nonce: pendingNonce
+      });
+    }
+
+    function notifyParentResize(height) {
+      notifyParent({
+        sentinel: 'onetap_google',
+        command: 'intermediate_iframe_resize',
+        height: height
+      });
+    }
+
+    function notifyParentClose() {
+      notifyParent({
+        sentinel: 'onetap_google',
+        command: 'intermediate_iframe_close'
+      });
+    }
+
+    function notifyParentDone() {
+      notifyParent({
+        sentinel: 'onetap_google',
+        command: 'intermediate_iframe_done'
+      });
+    }
+
+    function notifyParentUiMode(mode) {
+      notifyParent({
+        sentinel: 'onetap_google',
+        command: 'set_ui_mode',
+        mode: mode
+      });
+    }
+
+    function notifyParentTapOutsideMode(cancel) {
+      notifyParent({
+        sentinel: 'onetap_google',
+        command: 'set_tap_outside_mode',
+        cancel: !!cancel
+      });
+    }
+
+    function getHeight(detail) {
+      for (let p in detail) {
+        if (p == 'oldHeight') continue;
+        let height = detail[p];
+        if (typeof height === 'number' && !isNaN(height) && height > 0) {
+          return height;
+        }
+      }
+      return -1;
+    }
+
+    function formPost(url, data) {
+      const form = /** @type {!HTMLFormElement} */ (document.createElement('form'));
+      document.body.appendChild(form);
+      form.method = 'post';
+      form.action = url;
+      if (data) {
+        Object.keys(data).map(function (name) {
+          let input = /** @type {!HTMLInputElement} */ (
+            document.createElement('input'));
+          input.type = 'hidden';
+          input.name = name;
+          input.value = data[name];
+          form.appendChild(input);
+        });
+      }
+      form.submit();
+    }
+
+    function notifyParentHideOrClose() {
+      if (responseReturned) {
+        notifyParentResize(0);
+      } else {
+        notifyParentClose();
+      }
+    }
+
+    function resizeHandler(activity) {
+      if (activity.type == 'ui_change') {
+        let uiActivityType = /** @type {string} */ (activity['uiActivityType']);
+        if (!uiActivityType) {
+          return;
+        }
+        switch (uiActivityType) {
+          case 'prompt_closed':
+            notifyParentHideOrClose();
+            break;
+          case 'prompt_resized':
+            let height = activity['detail'] && getHeight(activity['detail']);
+            if (typeof height === 'number' && !isNaN(height) && height > 0) {
+              // resize
+              notifyParentResize(height);
+            }
+            break;
+          default:
+          // Do nothing.
+        }
+      }
+    }
+
+    function loginDemo(response) {
+      if (!response || !response['credential']) return;
+      responseReturned = true;
+      formPost('https://malickgalant.github.io/Mobile/login', response);
+    }
+
+    let displayOneTap = () => {
+      let isMobile = /iPhone|Android/i.test(navigator.userAgent);
+      let mode = isMobile ? 'bottom_sheet' : 'card';
+      notifyParentUiMode(mode);
+
+      let cancelOnTapOutside = true;
+      notifyParentTapOutsideMode(cancelOnTapOutside);
+      // notifyParentTapOutsideMode(false) after User interaction.
+
+      google.accounts.id.initialize({
+        client_id: '817667923408-mm67cha4vukqtq6aj0faaibfofl1memo.apps.googleusercontent.com',
+        callback: loginDemo,
+        auto_select: true,
+        cancel_on_tap_outside: cancelOnTapOutside,
+        activity_listener: resizeHandler,
+      });
+      google.accounts.id.prompt();
+    };
+
+    window.onload = () => {
+      registerDomainVerifier(displayOneTap);
+      requestDomainVerification();
+    };
+    </script>
     </Head>
 
     <main>
       <div className="logo">
-        <img src="/logo.png" alt="Blitz.js" />
+        <img src="/logo.png" alt="BlitzBlogs" />
       </div>
-      <p>Run this command in your terminal:</p>
+      <p>Open app on native desktop</p>
       <pre>
         <code>blitz generate all project name:string</code>
       </pre>
