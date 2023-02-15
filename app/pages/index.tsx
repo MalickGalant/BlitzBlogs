@@ -3,7 +3,7 @@ import { Head, Link } from "blitz"
 const Home = () => (
   <div className="container">
     <Head>
-      <title>BlitzBlogs</title>
+      <title>BlitzSpot</title>
       <link rel="icon" href="/favicon.ico" />
       
     </Head>
@@ -11,10 +11,11 @@ const Home = () => (
     <main>
 
       <div className="logo">
-        <img src="/logo.png" alt="BlitzBlogs" />
+        <img src="/log.png" alt="BlitzBlogs" />
       </div>
 
       <p>Open this app on native Desktop</p>
+
       <pre>
         <code>blitz generate all project name:string</code>
       </pre>
@@ -31,10 +32,11 @@ const Home = () => (
           <a>Advertisement</a>
         </Link>
       </p>
+
       <div className="buttons">
         <a
           className="button"
-          href="https://github.com/MalickaGalant/BlitzBlogs"
+          href="https://github.com/MalickGalant/BlitzSpot"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -42,11 +44,11 @@ const Home = () => (
         </a>
         <a
           className="button-outline"
-          href="https://github.com/blitz-js/blitz"
+          href="https://github.com/MalickGalant/blitzspot"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Github Login
+          Login
         </a>
         <a
           className="button-outline"
@@ -57,6 +59,7 @@ const Home = () => (
           Slack
         </a>
       </div>
+
     </main>
 
     <footer>
