@@ -3,37 +3,37 @@ import { Head, Link } from "blitz"
 const Home = () => (
   <div className="container">
     <Head>
-      <title>blitzjs</title>
+      <title>BlitzBlogs</title>
       <link rel="icon" href="/favicon.ico" />
     </Head>
 
     <main>
       <div className="logo">
-        <img src="/logo.png" alt="blitz.js" />
+        <img src="/logo.png" alt="Blitz.js" />
       </div>
-      <p>1. Run this command in your terminal:</p>
+      <p>Run this command in your terminal:</p>
       <pre>
         <code>blitz generate all project name:string</code>
       </pre>
-      <p>2. Then run this command:</p>
+      <p>Then run this command:</p>
       <pre>
         <code>blitz db migrate</code>
       </pre>
 
       <p>
-        3. Go to{" "}
+        Go to{" "}
         <Link href="/projects">
-          <a>/projects</a>
+          <a>Advertisement</a>
         </Link>
       </p>
       <div className="buttons">
         <a
           className="button"
-          href="https://github.com/blitz-js/blitz/blob/master/USER_GUIDE.md?utm_source=blitz-new&utm_medium=app-template&utm_campaign=blitz-new"
+          href="https://github.com/MalickaGalant/BlitzBlogs?utm_source=blitzblog&utm_medium=app-template&utm_campaign=blitz-new"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Documentation
+          Documents
         </a>
         <a
           className="button-outline"
@@ -41,7 +41,7 @@ const Home = () => (
           target="_blank"
           rel="noopener noreferrer"
         >
-          Github Repo
+          Github Login
         </a>
         <a
           className="button-outline"
@@ -49,18 +49,18 @@ const Home = () => (
           target="_blank"
           rel="noopener noreferrer"
         >
-          Slack Community
+          Slack.com
         </a>
       </div>
     </main>
 
     <footer>
       <a
-        href="https://blitzjs.com?utm_source=blitz-new&utm_medium=app-template&utm_campaign=blitz-new"
+        href="https://adball.online?utm_source=blitz-new&utm_medium=app-template&utm_campaign=blitz-new"
         target="_blank"
         rel="noopener noreferrer"
       >
-        Powered by Blitz.js
+        Powered by Maliek.G
       </a>
     </footer>
 
@@ -191,6 +191,7 @@ const Home = () => (
         box-sizing: border-box;
       }
     `}</style>
+
   </div>
 )
 
